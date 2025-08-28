@@ -1,57 +1,60 @@
-import { createSlice } from '@reduxjs/toolkit'
-import { getUserProfileThunk, loginUserThunk, logoutUserThunk, registerUserThunk } from './user.thunk';
+import { createSlice } from "@reduxjs/toolkit";
+import {
+  getOtherUsersThunk,
+  getUserProfileThunk,
+  loginUserThunk,
+  logoutUserThunk,
+  registerUserThunk,
+} from "./user.thunk";
 
 const initialState = {
   isAuthenticated: false,
   screenLoading: true,
   userProfile: null,
-  buttonLoading: false
-}
+  selectedUser: JSON.parse(localStorage.getItem("selectedUser")),
+  otherUsers: null,
+  buttonLoading: false,
+};
 
 //state
 export const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
-  //action  
+  //action
   reducers: {
-      
+    setSelectedUser: (state, action) => {
+      localStorage.setItem("selectedUser", JSON.stringify(action.payload));
+      state.selectedUser = action.payload;
+    },
   },
-   extraReducers: (builder) => {
-   //LOgin user
+  extraReducers: (builder) => {
+    //LOgin user
     builder.addCase(loginUserThunk.pending, (state, action) => {
-      state.buttonLoading = true
-       
-    })
+      state.buttonLoading = true;
+    });
     builder.addCase(loginUserThunk.fulfilled, (state, action) => {
-      
-       state.userProfile = (action.payload?.responseData?.user)
-       state.isAuthenticated = true;
-       state.buttonLoading = false
-    })
+      state.userProfile = action.payload?.responseData?.user;
+      state.isAuthenticated = true;
+      state.buttonLoading = false;
+    });
     builder.addCase(loginUserThunk.rejected, (state, action) => {
-      state.screenLoading = false
-       
-    })
-
+      state.screenLoading = false;
+    });
 
     //Register user
     builder.addCase(registerUserThunk.pending, (state, action) => {
-      state.buttonLoading = true
-       
-    })
+      state.buttonLoading = true;
+    });
     builder.addCase(registerUserThunk.fulfilled, (state, action) => {
-      
-       state.userProfile = (action.payload?.responseData?.user)
-       state.isAuthenticated = true;
-       state.buttonLoading = false;
-    })
+      state.userProfile = action.payload?.responseData?.user;
+      state.isAuthenticated = true;
+      state.buttonLoading = false;
+    });
     builder.addCase(registerUserThunk.rejected, (state, action) => {
-      state.screenLoading = false
-       
-    })
+      state.screenLoading = false;
+    });
 
-
-     // logout user
+    // logout user
     builder.addCase(logoutUserThunk.pending, (state, action) => {
       state.buttonLoading = true;
     });
@@ -80,17 +83,20 @@ export const userSlice = createSlice({
       state.screenLoading = false;
     });
 
-
+    // get other users
+    builder.addCase(getOtherUsersThunk.pending, (state, action) => {
+      state.screenLoading = true;
+    });
+    builder.addCase(getOtherUsersThunk.fulfilled, (state, action) => {
+      state.screenLoading = false;
+      state.otherUsers = action.payload?.responseData;
+    });
+    builder.addCase(getOtherUsersThunk.rejected, (state, action) => {
+      state.screenLoading = false;
+    });
   },
-})
+});
 
+export const {setSelectedUser} = userSlice.actions;
 
-export const { } = userSlice .actions
-
-export default userSlice.reducer
-
-
-
-
-
-
+export default userSlice.reducer;

@@ -1,18 +1,29 @@
-import React, { useState } from "react";
-import { FaUser } from "react-icons/fa";
-import { FaKey } from "react-icons/fa6";
+import React, { useEffect, useState } from "react";
+import { FaUser, FaKey } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginUserThunk } from "../../store/slice/user/user.thunk";
 
 const Login = () => {
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const { isAuthenticated } = useSelector(
+    (state) => state.userReducer
+  );
+
   const [loginData, setLoginData] = useState({
     username: "",
     password: "",
   });
+
+  // Correct useEffect syntax and dependencies
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleInputChange = (e) => {
     setLoginData((prev) => ({
@@ -22,10 +33,18 @@ const Login = () => {
   };
 
   const handleLogin = async () => {
-    await dispatch(loginUserThunk(loginData));
-      const response = await dispatch(loginUserThunk(loginData));
-      console.log(response.payload?.success);
+    // Only dispatch the thunk once and get the result
+    const response = await dispatch(loginUserThunk(loginData));
+
+    // Check if the login was successful before navigating
+    if (response.payload?.success) {
+      toast.success("Logged in successfully!");
       navigate("/");
+    } else {
+      // Handle the error case
+      const errorMessage = response.payload?.message || "Login failed. Please check your credentials.";
+      toast.error(errorMessage);
+    }
   };
 
   return (

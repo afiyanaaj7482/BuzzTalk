@@ -1,22 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { FaKey } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux"; // Import useSelector
 import { registerUserThunk } from "../../store/slice/user/user.thunk";
 import toast from "react-hot-toast";
 
 const Signup = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  // Correctly use useSelector to get the isAuthenticated state
+  const { isAuthenticated } = useSelector((state) => state.userReducer);
+
   const [signupData, setSignupData] = useState({
     fullName: "",
     username: "",
     password: "",
     confirmPassword: "",
-    gender: "", 
+    gender: "",
   });
-  // console.log(signupData)
+
+  // Use a proper useEffect hook to redirect if already authenticated
+  useEffect(() => {
+    // Check for the cornavigaterect variable name: isAuthenticated
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, ]); // Add dependencies to the array
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -26,23 +37,30 @@ const Signup = () => {
     }));
   };
 
-const handleSignup = async () => {
-  if (signupData.password !== signupData.confirmPassword) {
-    return toast.error("Password and confirm password do not match");
-  }
-  const response = await dispatch(registerUserThunk(signupData));
-  console.log(response.payload?.success);
-  navigate("/");
-};
+  const handleSignup = async () => {
+    if (signupData.password !== signupData.confirmPassword) {
+      return toast.error("Password and confirm password do not match");
+    }
 
+    // Await the dispatch to get the action result
+    const response = await dispatch(registerUserThunk(signupData));
 
-  // console.log(signupData);
+    // Check if the registration was successful before navigating
+    if (response.payload?.success) {
+      toast.success("Account created successfully!");
+      navigate("/");
+    } else {
+      // Handle the error case, e.g., show a toast with the error message
+      // The error message is often in response.payload or response.error
+      toast.error(response.payload?.message || "Registration failed. Please try again.");
+    }
+  };
 
   return (
     <div>
       <div className="flex justify-center items-center p-6 min-h-screen">
         <div className="max-w-[40rem] w-full flex flex-col gap-5 bg-base-200 p-6 rounded-lg">
-          <h1 className="flex justify-start">Please Sign in..</h1>
+          <h1 className="flex justify-start">Please Sign Up</h1>
 
           {/* Full Name */}
           <label className="input input-bordered w-full flex items-center gap-2">

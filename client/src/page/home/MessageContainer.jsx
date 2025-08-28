@@ -2,13 +2,15 @@ import React from "react";
 import User from "./User";
 import Message from "./Message";
 import { IoMdSend } from "react-icons/io";
+import { useSelector } from "react-redux";
 
 const MessageContainer = () => {
+    const { selectedUser } = useSelector((state) => state.userReducer);
   return (
     <div className="h-screen w-full flex flex-col">
       {/* Top User Bar */}
       <div className="px-3 py-3 border-b border-b-white/10">
-        <User />
+        <User userDetails={selectedUser}/>
       </div>
 
       {/* Messages Area */}

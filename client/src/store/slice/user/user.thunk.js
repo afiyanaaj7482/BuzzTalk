@@ -63,8 +63,7 @@ export const logoutUserThunk = createAsyncThunk(
     }
   }
 );
-
-//getUser
+// getUser
 export const getUserProfileThunk = createAsyncThunk(
   "user/getProfile",
   async (_, { rejectWithValue }) => {
@@ -74,7 +73,21 @@ export const getUserProfileThunk = createAsyncThunk(
     } catch (error) {
       console.error(error);
       const errorOutput = error?.response?.data?.errMessage;
-      // toast.error(errorOutput);
+      return rejectWithValue(errorOutput);
+    }
+  }
+);
+
+// getOtherUsers
+export const getOtherUsersThunk = createAsyncThunk(
+  "user/getOtherUsers",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("/user/getOtherUsers");
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      const errorOutput = error?.response?.data?.errMessage;
       return rejectWithValue(errorOutput);
     }
   }
