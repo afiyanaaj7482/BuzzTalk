@@ -11,7 +11,7 @@ const initialState = {
   isAuthenticated: false,
   screenLoading: true,
   userProfile: null,
-  selectedUser: JSON.parse(localStorage.getItem("selectedUser")),
+  selectedUserr: JSON.parse(localStorage.getItem("selectedUser")),
   otherUsers: null,
   buttonLoading: false,
 };
