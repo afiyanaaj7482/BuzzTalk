@@ -10,12 +10,13 @@ const SendMessage = () => {
   const { selectedUser } = useSelector((state) => state.userReducer);
   console.log(selectedUser?._id)
   const [message, setMessage] = useState("");
+  console.log(message);
 
   const handleSendMessage = () => {
  
     dispatch(
   sendMessageThunk({
-    receiverId: selectedUser?._id, // ✅ Correct spelling
+    receiverId: selectedUser?._id, 
     message,
   })
 );

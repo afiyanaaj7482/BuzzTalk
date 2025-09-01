@@ -15,10 +15,13 @@ export const messageSlice = createSlice({
       const oldMessages = state.messages ?? [];
       state.messages = [...oldMessages, action.payload];
     },
+    clearMessages: (state) => {
+      state.messages = []; // ✅ Clear old messages
+    },
   },
   extraReducers: (builder) => {
     // send message
-    builder.addCase(sendMessageThunk.pending, (state, action) => {
+    builder.addCase(sendMessageThunk.pending, (state) => {
       state.buttonLoading = true;
     });
     builder.addCase(sendMessageThunk.fulfilled, (state, action) => {
@@ -26,24 +29,24 @@ export const messageSlice = createSlice({
       state.messages = [...oldMessages, action.payload?.responseData];
       state.buttonLoading = false;
     });
-    builder.addCase(sendMessageThunk.rejected, (state, action) => {
+    builder.addCase(sendMessageThunk.rejected, (state) => {
       state.buttonLoading = false;
     });
 
     // get messages
-    builder.addCase(getMessageThunk.pending, (state, action) => {
+    builder.addCase(getMessageThunk.pending, (state) => {
       state.buttonLoading = true;
     });
     builder.addCase(getMessageThunk.fulfilled, (state, action) => {
       state.messages = action.payload?.responseData?.messages;
       state.buttonLoading = false;
     });
-    builder.addCase(getMessageThunk.rejected, (state, action) => {
+    builder.addCase(getMessageThunk.rejected, (state) => {
       state.buttonLoading = false;
     });
   },
 });
 
-export const {setNewMessage} = messageSlice.actions;
+export const { setNewMessage, clearMessages } = messageSlice.actions;
 
 export default messageSlice.reducer;
