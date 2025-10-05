@@ -16,7 +16,7 @@ export const messageSlice = createSlice({
       state.messages = [...oldMessages, action.payload];
     },
     clearMessages: (state) => {
-      state.messages = []; // ✅ Clear old messages
+      state.messages = []; 
     },
   },
   extraReducers: (builder) => {

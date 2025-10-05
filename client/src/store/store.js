@@ -1,13 +1,18 @@
-import { configureStore } from '@reduxjs/toolkit'
-import userReducer from "./slice/user/user.slice"
+import { configureStore } from '@reduxjs/toolkit';
+import userReducer from "./slice/user/user.slice";
 import messageReducer from "./slice/message/message.slice";
+import socketReducer from "./slice/socket/socket.slice"; 
 
-//reducer ko store me lgana h
 export const store = configureStore({
   reducer: {
     userReducer,
-     messageReducer
+    messageReducer,
+    socketReducer, 
   },
-  
-})
-
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredPaths: ["socketReducer.socket"], 
+      },
+    }),
+});

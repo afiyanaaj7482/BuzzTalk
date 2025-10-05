@@ -4,10 +4,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUserThunk } from "../../store/slice/user/user.thunk";
+import { IoEyeOutline, IoEye } from "react-icons/io5";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [show, setShow] = useState(false);
 
   const { isAuthenticated } = useSelector(
     (state) => state.userReducer
@@ -33,15 +35,15 @@ const Login = () => {
   };
 
   const handleLogin = async () => {
-    // Only dispatch the thunk once and get the result
+
     const response = await dispatch(loginUserThunk(loginData));
 
-    // Check if the login was successful before navigating
+    
     if (response.payload?.success) {
       toast.success("Logged in successfully!");
       navigate("/");
     } else {
-      // Handle the error case
+      
       const errorMessage = response.payload?.message || "Login failed. Please check your credentials.";
       toast.error(errorMessage);
     }
@@ -52,6 +54,7 @@ const Login = () => {
       <div className="flex justify-center items-center p-6 min-h-screen">
         <div className="max-w-[40rem] w-full flex flex-col gap-5 bg-base-200 p-6 rounded-lg">
           <h1 className="flex justify-start">Please log in..</h1>
+           
 
           {/* Username */}
           <label className="input input-bordered w-full flex items-center gap-2">
@@ -67,17 +70,30 @@ const Login = () => {
           </label>
 
           {/* Password */}
-          <label className="input input-bordered w-full flex items-center gap-2">
-            <FaKey />
-            <input
-              type="password"
-              name="password"
-              className="grow"
-              placeholder="Password"
-              value={loginData.password}
-              onChange={handleInputChange}
-            />
-          </label>
+     
+<label className="input input-bordered w-full flex items-center gap-2 relative">
+  <FaKey />
+  {!show ? (
+    <IoEyeOutline
+      className="w-[20px] h-[20px] cursor-pointer absolute right-[5%] bottom-[50%] translate-y-1/2"
+      onClick={() => setShow(true)}
+    />
+  ) : (
+    <IoEye
+      className="w-[20px] h-[20px] cursor-pointer absolute right-[5%] bottom-[50%] translate-y-1/2"
+      onClick={() => setShow(false)}
+    />
+  )}
+  <input
+    type={show ? "text" : "password"}
+    name="password"
+    className="grow"
+    placeholder="Password"
+    value={loginData.password}
+    onChange={handleInputChange}
+  />
+</label>
+ 
 
           <button onClick={handleLogin} className="btn btn-primary">
             Login

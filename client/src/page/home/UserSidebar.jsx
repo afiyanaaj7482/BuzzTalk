@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { IoSearch } from "react-icons/io5";
-import User from "./User";
+import User from "./User"
 import { useDispatch, useSelector } from "react-redux";
 import {
   getOtherUsersThunk,
@@ -13,21 +13,22 @@ const UserSidebar = () => {
   const [users, setUsers] = useState([]);
   const { otherUsers, userProfile } = useSelector((state) => state.userReducer);
 
+
+  const fullUserList = [...(users || []), ...(userProfile ? [userProfile] : [])];
+
   const handleLogout = async () => {
     await dispatch(logoutUserThunk());
   };
 
   useEffect(() => {
     if (!searchValue) {
-      setUsers(otherUsers);
+      setUsers(otherUsers || []);
     } else {
       setUsers(
-        otherUsers.filter((user) => {
+        (otherUsers || []).filter((user) => {
           return (
             user.username.toLowerCase().includes(searchValue.toLowerCase()) ||
-            user.fullName
-              .toLowerCase()
-              .includes(searchValue.toLocaleLowerCase())
+            user.fullName.toLowerCase().includes(searchValue.toLowerCase())
           );
         })
       );
@@ -35,15 +36,13 @@ const UserSidebar = () => {
   }, [searchValue, otherUsers]);
 
   useEffect(() => {
-    (async () => {
-      await dispatch(getOtherUsersThunk());
-    })();
+    dispatch(getOtherUsersThunk());
   }, []);
 
   return (
     <div className="max-w-[20em] w-full h-screen flex flex-col border-r border-r-white/10">
       <h1 className="bg-black mx-3 rounded-lg mt-3 px-2 py-1 text-[#7480FF] text-xl font-semibold">
-        GUP SHUP
+        Buzz Talk
       </h1>
 
       <div className="p-3">
@@ -59,8 +58,13 @@ const UserSidebar = () => {
       </div>
 
       <div className="h-full overflow-y-auto px-3 flex flex-col gap-2 cursor-pointer">
-        {users?.map((userDetails) => {
-          return <User key={userDetails?._id} userDetails={userDetails} />;
+        {fullUserList?.map((userDetails, index) => {
+          return (
+            <User
+              key={userDetails?._id || `user-${index}`}
+              userDetails={userDetails}
+            />
+          );
         })}
       </div>
 

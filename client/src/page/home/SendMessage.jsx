@@ -8,9 +8,9 @@ const SendMessage = () => {
 
   const dispatch = useDispatch();
   const { selectedUser } = useSelector((state) => state.userReducer);
-  console.log(selectedUser?._id)
+ 
   const [message, setMessage] = useState("");
-  console.log(message);
+ 
 
   const handleSendMessage = () => {
  
